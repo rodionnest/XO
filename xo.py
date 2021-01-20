@@ -6,7 +6,8 @@ import colorama
 from colorama import Fore, Back, Style
 colorama.init()
 
-print(Style.BRIGHT + Fore.GREEN + 'Крестики-Нолики - Cyberpunk Edition.')
+title = 'Крестики-Нолики - Cyberpunk Edition.'
+print(Style.BRIGHT + Fore.GREEN + title)
 print(Style.RESET_ALL)
 quit_game = 0
 
@@ -40,7 +41,7 @@ def player_init():  # Инициализация игроков
 
 def clear_cons():  # Очистка консоли
     os.system('cls||clear')
-    print(Style.BRIGHT + Fore.GREEN + 'Крестики-Нолики - Cyberpunk Edition')
+    print(Style.BRIGHT + Fore.GREEN + title)
     if player_1 and player_2:
         print(Fore.YELLOW + f'Играют {player_1} и {player_2}')
     print(Style.RESET_ALL)
@@ -101,32 +102,34 @@ clear_cons()
 queue = random.choice(players)
 print(Fore.CYAN + 'Очередность определена случайным образом.')
 print(Style.RESET_ALL)
-time.sleep(2)
+time.sleep(1.5)
 clear_cons()
 
 print(Fore.CYAN +
       'Для того, чтобы поставить знак, введите координаты в формате "12"\n(где первая цифра это горизонталь, вторая - вертикаль)')
 print(Style.RESET_ALL)
 
-xo_field[1][1] = 'X'
-xo_field[1][2] = 'O'
-xo_field[1][3] = 'X'
-xo_field[2][1] = 'O'
-xo_field[2][2] = 'X'
-xo_field[2][3] = 'O'
-xo_field[3][1] = 'X'
-xo_field[3][2] = 'O'
-xo_field[3][3] = 'X'
+# xo_field[1][1] = 'X'
+# xo_field[1][2] = 'O'
+# xo_field[1][3] = 'X'
+# xo_field[2][1] = 'O'
+# xo_field[2][2] = 'X'
+# xo_field[2][3] = 'O'
+# xo_field[3][1] = 'X'
+# xo_field[3][2] = 'O'
+# xo_field[3][3] = 'X'
 
 field_show()
 
 
-player_turn = input(Style.BRIGHT + Fore.GREEN + f'Ходит {queue}: ')
-print(Style.RESET_ALL)
+while True:
+    player_turn = input(Style.BRIGHT + Fore.GREEN + f'Ходит {queue}: ')
+    print(Style.RESET_ALL)
+    if len(player_turn) != 2 or not player_turn.isdigit():
+        print('Неверный формат')
+    else:
+        break
+
 
 # возвращаем в очередь следующего игрока
 queue = players[(players.index(queue) + 1) % 2]
-
-
-queue = players[(players.index(queue) + 1) % 2]
-player_turn = input(f'Ходит {queue}: ')
