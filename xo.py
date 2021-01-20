@@ -9,7 +9,10 @@ colorama.init()
 title = 'Крестики-Нолики - Cyberpunk Edition.'
 print(Style.BRIGHT + Fore.GREEN + title)
 print(Style.RESET_ALL)
-quit_game = 0
+chars = ['X', 'O']
+game_quit = 0
+game_win = 0
+game_draw = 0
 
 
 def player_init():  # Инициализация игроков
@@ -19,8 +22,8 @@ def player_init():  # Инициализация игроков
             'Введите имя первого игрока (разрешены буквы и цифры): ')
         if len(player_1) > 20:
             print('Имя слишком большое')
-        if not player_1.isalnum():
-            print('Введены запрещенные символы')
+        elif player_1.count(' ') == len(player_1):
+            print('Имя не может содержать только пробелы')
         else:
             break
     global player_2
@@ -29,8 +32,8 @@ def player_init():  # Инициализация игроков
             'Введите имя второго игрока (разрешены буквы и цифры): ')
         if len(player_2) > 20:
             print('Имя слишком большое')
-        if not player_2.isalnum():
-            print('Введены запрещенные символы')
+        elif player_2.count(' ') == len(player_2):
+            print('Имя не может содержать только пробелы')
         else:
             break
     print('\n')
@@ -47,20 +50,18 @@ def clear_cons():  # Очистка консоли
     print(Style.RESET_ALL)
 
 
-def fieldsize_input():  # Инициализация размера поля
+def fieldsize_input():  # Инициализация размеров поля
     while True:
         global field_size
         field_size = input(
-            'Введите размер стороны поля (не больше 9, например, 3): ')
-        if field_size.isalpha():
+            'Введите размер стороны поля (от 3 до 9): ')
+        if not field_size.isdigit():
             print('Неверный формат')
-        elif ' ' in field_size:
-            print('Неверный формат')
-        elif int(field_size) > 9:
-            print('Неверный формат')
+        elif not (2 < int(field_size) < 10):
+            print('Неверный размер')
         else:
             print(f'Выбран размер {field_size}x{field_size}\n')
-            time.sleep(2)
+            time.sleep(1.5)
             break
     global xo_field
     xo_field = [['' for j in range(int(field_size) + 1)]
@@ -70,6 +71,27 @@ def fieldsize_input():  # Инициализация размера поля
     for i in range(len(xo_field)):  # подписываем вертикальные координаты.
         xo_field[i][0] = str(i)
     return field_size
+
+
+def charcountwin_input():  # Количество знаков подряд для выигрыша
+    while True:
+        global сharcount_win
+        сharcount_win = input(
+            f'Введите количество знаков подряд для выигрыша (меньше либо равно {field_size} и больше 2): ')
+        if not field_size.isdigit():
+            print('Неверный формат')
+        elif int(сharcount_win) < 3:
+            print('Количество должно быть больше 2')
+        elif int(сharcount_win) > int(field_size):
+            print('Количество должно быть меньше размера поля')
+        else:
+            if сharcount_win == '3' or сharcount_win == '4':
+                print(f'Выбрано {сharcount_win} знака для выигрыша\n')
+                time.sleep(1.5)
+            else:
+                print(f'Выбрано {сharcount_win} знаков для выигрыша\n')
+                time.sleep(1.5)
+            break
 
 
 def field_show():  # Вывод поля
@@ -92,11 +114,20 @@ def field_show():  # Вывод поля
         print('\n')
 
 
+def check_finish():  # Проверка условий окончания партии #! ДОРАБАТЫВАЕМ ПРОВЕРКУ УСЛОВИЙ ФИНИША
+    full_field = []
+    for i in xo_field:
+        full_field.append(all(i))
+    if all(full_field) and game_win == 0:
+        return 0
+
+
 player_init()
 clear_cons()
 fieldsize_input()
 clear_cons()
-
+charcountwin_input()
+clear_cons()
 
 # Партия игры
 queue = random.choice(players)
@@ -105,31 +136,32 @@ print(Style.RESET_ALL)
 time.sleep(1.5)
 clear_cons()
 
-print(Fore.CYAN +
-      'Для того, чтобы поставить знак, введите координаты в формате "12"\n(где первая цифра это горизонталь, вторая - вертикаль)')
-print(Style.RESET_ALL)
-
-# xo_field[1][1] = 'X'
-# xo_field[1][2] = 'O'
-# xo_field[1][3] = 'X'
-# xo_field[2][1] = 'O'
-# xo_field[2][2] = 'X'
-# xo_field[2][3] = 'O'
-# xo_field[3][1] = 'X'
-# xo_field[3][2] = 'O'
-# xo_field[3][3] = 'X'
-
 field_show()
 
 
+chars_queue = 0
+
 while True:
-    player_turn = input(Style.BRIGHT + Fore.GREEN + f'Ходит {queue}: ')
+    print(Fore.CYAN +
+          'Для того, чтобы поставить знак, введите координаты в формате "12"\n(где первая цифра это горизонталь, вторая - вертикаль)')
     print(Style.RESET_ALL)
-    if len(player_turn) != 2 or not player_turn.isdigit():
-        print('Неверный формат')
-    else:
-        break
+    while True:
+        player_turn = input(Style.BRIGHT + Fore.GREEN +
+                            f'Ходит {queue} ({chars[chars_queue]}): ')
+        print(Style.RESET_ALL)
+        if len(player_turn) != 2 or not player_turn.isdigit():
+            print('Неверный формат')
+        elif int(player_turn[0]) > int(field_size) or int(player_turn[1]) > int(field_size):
+            print('Неверное значение')
+        elif xo_field[int(player_turn[1])][int(player_turn[0])] != '':
+            print('Знак в этом месте уже есть')
+        else:
+            break
 
+    xo_field[int(player_turn[1])][int(player_turn[0])] = chars[chars_queue]
+    clear_cons()
 
-# возвращаем в очередь следующего игрока
-queue = players[(players.index(queue) + 1) % 2]
+    # возвращаем в очередь следующего игрока
+    queue = players[(players.index(queue) + 1) % 2]
+    chars_queue = (chars_queue + 1) % 2  # возвращаем следующий знак
+    field_show()
