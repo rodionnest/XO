@@ -172,13 +172,89 @@ def check_finish():  # Проверка условий окончания пар
                 break
         counter = 0
 
+    #  Создаем массив диагоналей поля
+    d = 0
+    xo_field_diag_arr = []
+    while True:
+        xo_field_diag = []
+        j = (len(xo_field)-1)-d
+        k = 0
+        if j < 0:
+            k = -j
+            j = 0
+        while j < len(xo_field) and k < len(xo_field[j]):
+            xo_field_diag.append(xo_field[j][k])
+            j += 1
+            k += 1
+        if len(xo_field_diag) == 0:
+            break
+        d += 1
+        xo_field_diag_arr.append(xo_field_diag)
+
+    #  Проверяем совпадение у получившегося массива
+
+    for i in range(len(xo_field_diag_arr)):
+        for j in range(len(xo_field_diag_arr[i])):
+            if not compar_char and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                compar_char = xo_field_diag_arr[i][j]
+                counter += 1
+            elif compar_char == xo_field_diag_arr[i][j] and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                counter += 1
+            elif compar_char != xo_field_diag_arr[i][j] and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                compar_char = xo_field_diag_arr[i][j]
+                counter = 1
+            if counter == int(charcount_win):
+                result = 'win'
+                break
+    counter = 0
+
+    #  Отзеркаливаем массив
+    xo_field_mirror = xo_field.copy()
+    for i in range(len(xo_field_mirror)):
+        xo_field_mirror[i] = xo_field_mirror[i][::-1]
+
+    #  Создаем массив диагоналей отзеркаленного поля
+    d = 0
+    xo_field_diag_arr = []
+    while True:
+        xo_field_diag = []
+        j = (len(xo_field_mirror)-1)-d
+        k = 0
+        if j < 0:
+            k = -j
+            j = 0
+        while j < len(xo_field_mirror) and k < len(xo_field_mirror[j]):
+            xo_field_diag.append(xo_field_mirror[j][k])
+            j += 1
+            k += 1
+        if len(xo_field_diag) == 0:
+            break
+        d += 1
+        xo_field_diag_arr.append(xo_field_diag)
+
+    #  Проверяем совпадение у получившегося массива
+
+    for i in range(len(xo_field_diag_arr)):
+        for j in range(len(xo_field_diag_arr[i])):
+            if not compar_char and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                compar_char = xo_field_diag_arr[i][j]
+                counter += 1
+            elif compar_char == xo_field_diag_arr[i][j] and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                counter += 1
+            elif compar_char != xo_field_diag_arr[i][j] and (xo_field_diag_arr[i][j] == 'X' or xo_field_diag_arr[i][j] == 'O'):
+                compar_char = xo_field_diag_arr[i][j]
+                counter = 1
+            if counter == int(charcount_win):
+                result = 'win'
+                break
+    counter = 0
+
     #  Проверка ничьей
     full_field = []
     for i in xo_field:
         full_field.append(all(i))
     if all(full_field) and not result:
         result = 'draw'
-    print(result)
     time.sleep(0.2)
 
 
@@ -221,7 +297,7 @@ while not result:
     queue = players[(players.index(queue) + 1) % 2]
     chars_queue = (chars_queue + 1) % 2  # возвращаем следующий знак
     field_show()
-
+queue = players[(players.index(queue) + 1) % 2]
 print(Style.BRIGHT + Fore.RED + f'Победил {queue}!')
 print(Style.BRIGHT + Fore.GREEN + 'Всего Вам наилучшего, заходите еще!')
 print(Style.RESET_ALL)
