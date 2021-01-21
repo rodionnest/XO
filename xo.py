@@ -6,7 +6,7 @@ import colorama
 from colorama import Fore, Back, Style
 colorama.init()
 
-title = 'Крестики-Нолики - Cyberpunk Edition.v.1.0.'
+title = 'Крестики-Нолики - Cyberpunk Edition v.1.0.'
 print(Style.BRIGHT + Fore.GREEN + title)
 print(Style.RESET_ALL)
 
@@ -126,7 +126,7 @@ def field_show():  # Вывод поля
         print('\n')
 
 
-def check_finish():  # Проверка условий окончания партии #! ДОРАБАТЫВАЕМ ПРОВЕРКУ УСЛОВИЙ ФИНИША
+def check_finish():  # Проверка условий окончания партии
     global xo_field
     global result
     global charcount_win
